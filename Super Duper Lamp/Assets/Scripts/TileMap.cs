@@ -12,21 +12,60 @@ public class TileMap : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		/*map = new int[30, 20];
+
+		map = new int[50, 50];
+
+        float xOffset = Random.Range(0, 10000000);
+        float yOffset = Random.Range(0, 10000000);
+
 		for (int i = 0; i < map.GetLength(0); i++) {
 			for (int j = 0; j < map.GetLength(1); j++) {
-				MonoBehaviour.print (Mathf.PerlinNoise (i / 100f, j / 100f));
-				map[i, j] = (int) (Mathf.PerlinNoise(i * 10, j * 10) * 4);
+                //MonoBehaviour.print (Mathf.PerlinNoise (i / 100f, j / 100f));
+                map[i, j] = (int) (Mathf.PerlinNoise(i * .1f, j * .1f) * 3);
+                if (map[i, j] == 2)
+                {
+                    map[i, j] = 1;
+                }
+                //map[i, j] = (int)(Random.Range(0, 4));
 			}
-		}*/
+		}
 		BuildMesh ();
+        BuildCollider();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
-
+    void BuildCollider()
+    {
+        PolygonCollider2D pc = GetComponent<PolygonCollider2D>();
+        int numPaths = 0;
+        for (int i = 0; i < map.GetLength(0); i++)
+        {
+            for (int j = 0; j < map.GetLength(1); j++)
+            {
+                if (map[i, j] == 0)
+                {
+                    numPaths++;
+                }
+            }
+        }
+        pc.pathCount = numPaths;
+        int pathCntr = 0;
+        for (int i = 0; i < map.GetLength(0); i++)
+        {
+            for (int j = 0; j < map.GetLength(1); j++)
+            {
+                if (map[i, j] == 0)
+                {
+                    Vector2[] points = { new Vector2(i, j), new Vector2(i + 1, j), new Vector2(i, j + 1), new Vector2(i + 1, j + 1) };
+                    pc.SetPath(pathCntr, points);
+                    pathCntr++;
+                }
+            }
+        }
+    }
 	void BuildMesh() {
 		Mesh mesh = new Mesh ();
 
