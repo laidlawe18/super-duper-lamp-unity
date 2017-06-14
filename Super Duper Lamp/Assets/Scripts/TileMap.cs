@@ -12,13 +12,13 @@ public class TileMap : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		map = new int[30, 20];
+		/*map = new int[30, 20];
 		for (int i = 0; i < map.GetLength(0); i++) {
 			for (int j = 0; j < map.GetLength(1); j++) {
 				MonoBehaviour.print (Mathf.PerlinNoise (i / 100f, j / 100f));
 				map[i, j] = (int) (Mathf.PerlinNoise(i * 10, j * 10) * 4);
 			}
-		}
+		}*/
 		BuildMesh ();
 	}
 	
