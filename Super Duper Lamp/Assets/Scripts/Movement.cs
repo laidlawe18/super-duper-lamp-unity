@@ -7,11 +7,13 @@ public class Movement : MonoBehaviour {
     public float jumpForce = 6000f;
 
     private Rigidbody2D rb2d;       //Store a reference to the Rigidbody2D component required to use 2D Physics.
+    private Animator animator;
     public bool grounded = true;
 
     // Use this for initialization
     void Start () {
         rb2d = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
 	}
 	
 	// Update is called once per frame
@@ -19,13 +21,29 @@ public class Movement : MonoBehaviour {
         
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        if (Input.GetButton("Jump") && grounded)
+        if (Input.GetButton("Jump") && grounded && rb2d.velocity.y <= 0)
         {
             rb2d.AddForce(new Vector2(0, jumpForce));
-            grounded = false;
         }
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
         rb2d.velocity = new Vector2(moveHorizontal * speed, rb2d.velocity.y);
+        if (rb2d.velocity.x < 0)
+        {
+            GetComponent<SpriteRenderer>().flipX = true;
+            if (!animator.GetBool("Walking"))
+            {
+                animator.SetBool("Walking", true);
+            }
+        } else if (rb2d.velocity.x > 0)
+        {
+            GetComponent<SpriteRenderer>().flipX = false;
+            if (!animator.GetBool("Walking"))
+            {
+                animator.SetBool("Walking", true);
+            }
+        } else
+        {
+            animator.SetBool("Walking", false);
+        }
 	}
 
     private void OnTriggerEnter2D(Collider2D collision)

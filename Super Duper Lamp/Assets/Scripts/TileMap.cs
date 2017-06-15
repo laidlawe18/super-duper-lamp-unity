@@ -13,25 +13,35 @@ public class TileMap : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		map = new int[50, 50];
+        BuildMap();
+		BuildMesh ();
+        BuildCollider();
+	}
+
+    void BuildMap()
+    {
+        map = new int[2000, 2000];
 
         float xOffset = Random.Range(0, 100000);
         float yOffset = Random.Range(0, 100000);
 
-		for (int i = 0; i < map.GetLength(0); i++) {
-			for (int j = 0; j < map.GetLength(1); j++) {
+        for (int i = 0; i < map.GetLength(0); i++)
+        {
+            for (int j = 0; j < map.GetLength(1); j++)
+            {
                 //MonoBehaviour.print (Mathf.PerlinNoise (i / 100f, j / 100f));
-                map[i, j] = (int) (Mathf.PerlinNoise(i * .1f + xOffset, j * .1f + yOffset) * 3);
+                /*map[i, j] = (int) (Mathf.PerlinNoise(i * .1f + xOffset, j * .2f + yOffset) * 3);
                 if (map[i, j] == 2)
                 {
                     map[i, j] = 1;
-                }
+                }*/
+                map[i, j] = 0;
                 //map[i, j] = (int)(Random.Range(0, 4));
-			}
-		}
-		BuildMesh ();
-        BuildCollider();
-	}
+            }
+        }
+
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -45,7 +55,7 @@ public class TileMap : MonoBehaviour {
         {
             for (int j = 0; j < map.GetLength(1); j++)
             {
-                if (map[i, j] == 0)
+                if (getInMap(i, j) == 0 && (getInMap(i + 1, j) == 1 || getInMap(i - 1, j) == 1 || getInMap(i, j + 1) == 1 || getInMap(i, j - 1) == 1))
                 {
                     numPaths++;
                 }
@@ -57,7 +67,7 @@ public class TileMap : MonoBehaviour {
         {
             for (int j = 0; j < map.GetLength(1); j++)
             {
-                if (map[i, j] == 0)
+                if (getInMap(i, j) == 0 && (getInMap(i + 1, j) == 1 || getInMap(i - 1, j) == 1 || getInMap(i, j + 1) == 1 || getInMap(i, j - 1) == 1))
                 {
                     Vector2[] points = { new Vector2(i, j), new Vector2(i + 1, j), new Vector2(i + 1, j + 1), new Vector2(i, j + 1) };
                     pc.SetPath(pathCntr, points);
@@ -96,7 +106,6 @@ public class TileMap : MonoBehaviour {
 
 				int textureRow = map[i, j] / textureCols;
 				int textureCol = map[i, j] % textureCols;
-				MonoBehaviour.print((textureCol / textureCols + texturePad / textureCols) + ", " + (textureRow / textureRows + texturePad / textureRows) + " | " + ((textureCol + 1) / (float) textureCols - texturePad / textureCols) + ", " + (textureRow / textureRows + texturePad / textureRows));
 				uv[baseInd * 4] = new Vector2((float)textureCol / (float)textureCols + texturePad / textureCols, (float)textureRow / (float)textureRows + texturePad / textureRows);
 				uv[baseInd * 4 + 1] = new Vector2((float)(textureCol + 1) / (float)textureCols - texturePad / textureCols, (float)textureRow / (float)textureRows + texturePad / textureRows);
 				uv[baseInd * 4 + 2] = new Vector2((float)textureCol / (float)textureCols + texturePad / textureCols, (float)(textureRow + 1) / (float)textureRows - texturePad / textureRows);
@@ -111,4 +120,13 @@ public class TileMap : MonoBehaviour {
 
 		GetComponent<MeshFilter>().mesh = mesh;
 	}
+
+    int getInMap(int i, int j)
+    {
+        if (i < 0 || i >= map.GetLength(0) || j < 0 || j >= map.GetLength(1))
+        {
+            return 1;
+        }
+        return map[i, j];
+    }
 }
