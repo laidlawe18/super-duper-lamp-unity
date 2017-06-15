@@ -18,6 +18,6 @@ public class Movement : MonoBehaviour {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
-        rb2d.AddForce(movement * speed);
+        rb2d.velocity = new Vector2(moveHorizontal * speed, rb2d.velocity.y);
 	}
 }
