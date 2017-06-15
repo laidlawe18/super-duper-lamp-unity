@@ -141,7 +141,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 702b3998e3911764fa80cab0abacf8ed, type: 2}
+  - {fileID: 2100000, guid: 0da1a8f4a64af3342869e0e992cea815, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 134578351}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6449a7c31c1b1424596d13b02a26517e, type: 3}
+  m_Script: {fileID: 11500000, guid: f8416d59db152d847b40e2dc79e21206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &134578355
@@ -268,10 +268,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 164768431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0306be4f45d3254da0b4303cf386851, type: 3}
+  m_Script: {fileID: 11500000, guid: 66be3c887538c5844865ad5822399490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
+  speed: 2000
 --- !u!50 &164768433
 Rigidbody2D:
   serializedVersion: 4
@@ -284,7 +284,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 1
   m_Mass: 5.5235996
-  m_LinearDrag: 1
+  m_LinearDrag: 100
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
@@ -305,7 +305,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 251ca27c1ac13b44aa3b6d23e0059e96, type: 2}
+  - {fileID: 2100000, guid: cef647f7ad3ac7d41afd5f717e0dea29, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -324,7 +324,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 865099cd0a96b0145bf6f432df824d79, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0231d3afc4849bb49b97ebebc3b365c9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
