@@ -15,13 +15,13 @@ public class TileMap : MonoBehaviour {
 
 		map = new int[50, 50];
 
-        float xOffset = Random.Range(0, 10000000);
-        float yOffset = Random.Range(0, 10000000);
+        float xOffset = Random.Range(0, 100000);
+        float yOffset = Random.Range(0, 100000);
 
 		for (int i = 0; i < map.GetLength(0); i++) {
 			for (int j = 0; j < map.GetLength(1); j++) {
                 //MonoBehaviour.print (Mathf.PerlinNoise (i / 100f, j / 100f));
-                map[i, j] = (int) (Mathf.PerlinNoise(i * .1f, j * .1f) * 3);
+                map[i, j] = (int) (Mathf.PerlinNoise(i * .1f + xOffset, j * .1f + yOffset) * 3);
                 if (map[i, j] == 2)
                 {
                     map[i, j] = 1;
