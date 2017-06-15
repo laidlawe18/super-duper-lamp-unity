@@ -59,7 +59,7 @@ public class TileMap : MonoBehaviour {
             {
                 if (map[i, j] == 0)
                 {
-                    Vector2[] points = { new Vector2(i, j), new Vector2(i + 1, j), new Vector2(i, j + 1), new Vector2(i + 1, j + 1) };
+                    Vector2[] points = { new Vector2(i, j), new Vector2(i + 1, j), new Vector2(i + 1, j + 1), new Vector2(i, j + 1) };
                     pc.SetPath(pathCntr, points);
                     pathCntr++;
                 }
