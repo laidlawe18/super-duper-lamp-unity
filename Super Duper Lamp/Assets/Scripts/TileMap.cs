@@ -17,7 +17,7 @@ public class TileMap : MonoBehaviour {
     public const int loadSize = 10;
     public const int deloadSize = 15;
 
-    public int[,] map = {{1, 2, 1, 1, 1}, {1, 3, 0, 0, 1}, {1, 0, 2, 0, 1}, {1, 2, 0, 1, 1}, {1, 1, 3, 1, 3}};
+    public int[,] map;
 
     GameObject[,] chunks;
 
@@ -142,17 +142,88 @@ public class TileMap : MonoBehaviour {
             for (int j = 0; j < map.GetLength(1); j++)
             {
                 //MonoBehaviour.print (Mathf.PerlinNoise (i / 100f, j / 100f));
-                map[i, j] = (int) (Mathf.PerlinNoise(i * .2f + xOffset, j * .2f + yOffset) * 3);
+                /*map[i, j] = (int) (Mathf.PerlinNoise(i * .2f + xOffset, j * .2f + yOffset) * 3);
                 if (map[i, j] == 2)
                 {
                     map[i, j] = 1;
-                }
-                //map[i, j] = 0;
+                }*/
+                map[i, j] = 0;
                 //map[i, j] = (int)(Random.Range(0, 4));
             }
         }
 
+        Vector2 start = new Vector2(50, 900);
+        Vector2 end = new Vector2(1950, Random.Range(600, 900));
+        Vector2[] points = new Vector2[20];
+        int counter = 0;
+        for (int i = 0; i < 2000; i += 1000)
+        {
+            for (int j = 0; j < 1500; j += 750)
+            {
+                for (int k = 0; k < 5; k++)
+                {
+                    points[counter] = new Vector2(Random.Range(i, i + 1000), Random.Range(j, j + 750));
+                    counter++;
+                }
+            }
+        }
+        MonoBehaviour.print("Hello sir");
 
+        points[0] = start;
+        points[19] = end;
+
+        bool[,] adjacency = new bool[20, 20];
+        for (int i = 0; i < 20; i++)
+        {
+            for (int j = 0; j < 20; j++)
+            {
+                adjacency[i, j] = false;
+            }
+        }
+        for (int i = 0; i < 20; i++)
+        {
+            float multiplier = Random.Range(2, 5);
+            int pathsCreated = 0;
+            Vector2 origin = points[i];
+            while ((float)pathsCreated < multiplier)
+            {
+                MonoBehaviour.print("oh hey");
+
+                for (int j = 0; j < 20; j++)
+                {
+                    if (i != j)
+                    {
+                        MonoBehaviour.print(i + " " + j);
+                        Vector2 dest = points[j];
+                        float dist = Distance(origin.x, origin.y, dest.x, dest.y);
+                        if (Random.Range(0, dist / 100) < multiplier)
+                        {
+                            adjacency[i, j] = true;
+                            adjacency[j, i] = true;
+                            pathsCreated++;
+                            FillPath((int)origin.x, (int)origin.y, (int)dest.x, (int)dest.y, 3);
+                        }
+                    }
+                }
+
+                pathsCreated++;
+            }
+            
+        }
+
+        //FillPath((int)start.x, (int)start.y, (int)end.x, (int)end.y, 5);
+        GameObject.Find("Hero").transform.position = start;
+        
+        minX = (int)start.x/chunkSize - loadSize;
+        maxX = (int)start.x/chunkSize + loadSize;
+        minY = (int)start.y/chunkSize - loadSize;
+        maxY = (int)start.y/chunkSize + loadSize;
+        MonoBehaviour.print(minX + " " + maxX + " " + minY + " " + maxY);
+    }
+
+    float Distance(float x1, float y1, float x2, float y2)
+    {
+        return Mathf.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 	
 	void BuildChunks()
@@ -165,9 +236,7 @@ public class TileMap : MonoBehaviour {
         {
             for (int j = minY; j < maxY; j++)
             {
-                chunks[i, j] = Instantiate(chunk, new Vector3(i * chunkSize, j * chunkSize), Quaternion.identity) as GameObject;
-                chunks[i, j].transform.SetParent(this.gameObject.transform);
-                chunks[i, j].GetComponent<TileMapChunk>().SetXandY(i * chunkSize, j * chunkSize);
+                LoadChunk(i, j);
             }
         }
     }
@@ -190,5 +259,40 @@ public class TileMap : MonoBehaviour {
             chunks[i, j].transform.SetParent(this.gameObject.transform);
             chunks[i, j].GetComponent<TileMapChunk>().SetXandY(i * chunkSize, j * chunkSize);
         }
+    }
+
+    void FillCircle(int i, int j, int size)
+    {
+        for (int x = i - size; x < i + size; x++)
+        {
+            for (int y = j - size; y < j + size; y++)
+            {
+                if ((x - i) * (x - i) + (y - j) * (y - j) < size * size)
+                {
+                    SetInMap(x, y, 1);
+                }
+            }
+        }
+    }
+
+    void FillPath(int x1, int y1, int x2, int y2, int size)
+    {
+        MonoBehaviour.print("what is up");
+        int steps = Mathf.Max(x2 - x1, y2 - y1);
+        for (float frac = 0f; frac < 1f; frac += 1f / (float)steps)
+        {
+            int x = (int) (x1 + (x2 - x1) * frac);
+            int y = (int)(y1 + (y2 - y1) * frac);
+            FillCircle(x, y, size);
+        }
+    }
+
+    void SetInMap(int i, int j, int val)
+    {
+        if (i < 0 || i >= map.GetLength(0) || j < 0 || j >= map.GetLength(1))
+        {
+            return;
+        }
+        map[i, j] = val;
     }
 }
