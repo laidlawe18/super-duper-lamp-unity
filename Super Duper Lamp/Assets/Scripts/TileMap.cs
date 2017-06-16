@@ -31,7 +31,7 @@ public class TileMap : MonoBehaviour {
 
     void BuildMap()
     {
-        map = new int[1000, 300];
+        map = new int[2000, 1500];
 
         float xOffset = Random.Range(0, 100000);
         float yOffset = Random.Range(0, 100000);
@@ -56,8 +56,8 @@ public class TileMap : MonoBehaviour {
 	
 	void BuildChunks()
     {
-        int xChunks = map.GetLength(0) / chunkSize;
-        int yChunks = map.GetLength(1) / chunkSize;
+        int xChunks = 80;
+        int yChunks = 30;
 
         chunks = new GameObject[xChunks, yChunks];
         for (int i = 0; i < xChunks; i++)
