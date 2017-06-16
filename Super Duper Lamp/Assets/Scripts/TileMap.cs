@@ -4,23 +4,34 @@ using System.Collections;
 public class TileMap : MonoBehaviour {
 
 
-	int[,] map = {{1, 2, 1, 1, 1}, {1, 3, 0, 0, 1}, {1, 0, 2, 0, 1}, {1, 2, 0, 1, 1}, {1, 1, 3, 1, 3}};
+    public const int chunkSize = 10;
+    public const int textureRows = 2;
+    public const int textureCols = 2;
+    public const float texturePad = .1f;
 
-	const int textureRows = 2;
-	const int textureCols = 2;
-	const float texturePad = .1f;
+    public GameObject chunk;
+
+    public int[,] map = {{1, 2, 1, 1, 1}, {1, 3, 0, 0, 1}, {1, 0, 2, 0, 1}, {1, 2, 0, 1, 1}, {1, 1, 3, 1, 3}};
+
+    GameObject[,] chunks;
+
 
 	// Use this for initialization
 	void Start () {
 
         BuildMap();
-		BuildMesh ();
-        BuildCollider();
+        BuildChunks();
 	}
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     void BuildMap()
     {
-        map = new int[2000, 2000];
+        map = new int[1000, 300];
 
         float xOffset = Random.Range(0, 100000);
         float yOffset = Random.Range(0, 100000);
@@ -30,12 +41,12 @@ public class TileMap : MonoBehaviour {
             for (int j = 0; j < map.GetLength(1); j++)
             {
                 //MonoBehaviour.print (Mathf.PerlinNoise (i / 100f, j / 100f));
-                /*map[i, j] = (int) (Mathf.PerlinNoise(i * .1f + xOffset, j * .2f + yOffset) * 3);
+                map[i, j] = (int) (Mathf.PerlinNoise(i * .2f + xOffset, j * .2f + yOffset) * 3);
                 if (map[i, j] == 2)
                 {
                     map[i, j] = 1;
-                }*/
-                map[i, j] = 0;
+                }
+                //map[i, j] = 0;
                 //map[i, j] = (int)(Random.Range(0, 4));
             }
         }
@@ -43,90 +54,21 @@ public class TileMap : MonoBehaviour {
 
     }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-    void BuildCollider()
+	void BuildChunks()
     {
-        PolygonCollider2D pc = GetComponent<PolygonCollider2D>();
-        int numPaths = 0;
-        for (int i = 0; i < map.GetLength(0); i++)
+        int xChunks = map.GetLength(0) / chunkSize;
+        int yChunks = map.GetLength(1) / chunkSize;
+
+        chunks = new GameObject[xChunks, yChunks];
+        for (int i = 0; i < xChunks; i++)
         {
-            for (int j = 0; j < map.GetLength(1); j++)
+            for (int j = 0; j < yChunks; j++)
             {
-                if (getInMap(i, j) == 0 && (getInMap(i + 1, j) == 1 || getInMap(i - 1, j) == 1 || getInMap(i, j + 1) == 1 || getInMap(i, j - 1) == 1))
-                {
-                    numPaths++;
-                }
-            }
-        }
-        pc.pathCount = numPaths;
-        int pathCntr = 0;
-        for (int i = 0; i < map.GetLength(0); i++)
-        {
-            for (int j = 0; j < map.GetLength(1); j++)
-            {
-                if (getInMap(i, j) == 0 && (getInMap(i + 1, j) == 1 || getInMap(i - 1, j) == 1 || getInMap(i, j + 1) == 1 || getInMap(i, j - 1) == 1))
-                {
-                    Vector2[] points = { new Vector2(i, j), new Vector2(i + 1, j), new Vector2(i + 1, j + 1), new Vector2(i, j + 1) };
-                    pc.SetPath(pathCntr, points);
-                    pathCntr++;
-                }
+                chunks[i, j] = Instantiate(chunk, new Vector3(i * chunkSize, j * chunkSize), Quaternion.identity) as GameObject;
+                chunks[i, j].transform.SetParent(this.gameObject.transform);
+                chunks[i, j].GetComponent<TileMapChunk>().SetXandY(i * chunkSize, j * chunkSize);
             }
         }
     }
-	void BuildMesh() {
-		Mesh mesh = new Mesh ();
-
-		Vector3[] vertices = new Vector3[4 * map.Length];
-		int[] triangles = new int[6 * map.Length];
-		Vector2[] uv = new Vector2[vertices.Length];
-		Vector3[] normals = new Vector3[vertices.Length];
-
-		for (int i = 0; i < map.GetLength(0); i++) {
-			for (int j = 0; j < map.GetLength(1); j++) {
-				int baseInd = i * map.GetLength(1) + j;
-				vertices[baseInd * 4] = new Vector3(i, j);
-				vertices[baseInd * 4 + 1] = new Vector3(i + 1, j);
-				vertices[baseInd * 4 + 2] = new Vector3(i, j + 1);
-				vertices[baseInd * 4 + 3] = new Vector3(i + 1, j + 1);
-
-				normals[baseInd * 4] = Vector3.back;
-				normals[baseInd * 4 + 1] = Vector3.back;
-				normals[baseInd * 4 + 2] = Vector3.back;
-				normals[baseInd * 4 + 3] = Vector3.back;
-
-				triangles[baseInd * 6] = baseInd * 4;
-				triangles[baseInd * 6 + 1] = baseInd * 4 + 2;
-				triangles[baseInd * 6 + 2] = baseInd * 4 + 1;
-				triangles[baseInd * 6 + 3] = baseInd * 4 + 1;
-				triangles[baseInd * 6 + 4] = baseInd * 4 + 2;
-				triangles[baseInd * 6 + 5] = baseInd * 4 + 3;
-
-				int textureRow = map[i, j] / textureCols;
-				int textureCol = map[i, j] % textureCols;
-				uv[baseInd * 4] = new Vector2((float)textureCol / (float)textureCols + texturePad / textureCols, (float)textureRow / (float)textureRows + texturePad / textureRows);
-				uv[baseInd * 4 + 1] = new Vector2((float)(textureCol + 1) / (float)textureCols - texturePad / textureCols, (float)textureRow / (float)textureRows + texturePad / textureRows);
-				uv[baseInd * 4 + 2] = new Vector2((float)textureCol / (float)textureCols + texturePad / textureCols, (float)(textureRow + 1) / (float)textureRows - texturePad / textureRows);
-				uv[baseInd * 4 + 3] = new Vector2((float)(textureCol + 1) / (float)textureCols - texturePad / textureCols, (float)(textureRow + 1) / (float)textureRows - texturePad / textureRows);
-			}
-		}
-
-		mesh.vertices = vertices;
-		mesh.triangles = triangles;
-		mesh.uv = uv;
-		mesh.normals = normals;
-
-		GetComponent<MeshFilter>().mesh = mesh;
-	}
-
-    int getInMap(int i, int j)
-    {
-        if (i < 0 || i >= map.GetLength(0) || j < 0 || j >= map.GetLength(1))
-        {
-            return 1;
-        }
-        return map[i, j];
-    }
+    
 }
