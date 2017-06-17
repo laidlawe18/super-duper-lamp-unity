@@ -14,8 +14,8 @@ public class TileMap : MonoBehaviour {
     private int maxX = 30;
     private int minY = 10;
     private int maxY = 30;
-    public const int loadSize = 10;
-    public const int deloadSize = 15;
+    public  int loadSize = 10;
+    public  int deloadSize = 15;
 
     public int[,] map;
 
@@ -36,6 +36,12 @@ public class TileMap : MonoBehaviour {
         float heroY = GameObject.Find("Hero").transform.position.y;
         int heroXChunk = (int)(heroX / chunkSize);
         int heroYChunk = (int)(heroY / chunkSize);
+        if (loadSize < 100)
+        {
+            loadSize++;
+            deloadSize++;
+        }
+        
 
         //Loads Chunks
         if(heroXChunk - minX < loadSize)
@@ -132,7 +138,7 @@ public class TileMap : MonoBehaviour {
 
     void BuildMap()
     {
-        map = new int[2000, 1500];
+        map = new int[1000, 800];
 
         float xOffset = Random.Range(0, 100000);
         float yOffset = Random.Range(0, 100000);
@@ -152,22 +158,22 @@ public class TileMap : MonoBehaviour {
             }
         }
 
-        Vector2 start = new Vector2(50, 900);
-        Vector2 end = new Vector2(1950, Random.Range(600, 900));
+        Vector2 start = new Vector2(50, 500);
+        Vector2 end = new Vector2(950, Random.Range(300, 600));
         Vector2[] points = new Vector2[20];
-        int counter = 0;
-        for (int i = 0; i < 2000; i += 1000)
+        int counter = 1;
+        for (int i = 0; i < 1000; i += 334)
         {
-            for (int j = 0; j < 1500; j += 750)
+            for (int j = 0; j < 800; j += 400)
             {
-                for (int k = 0; k < 5; k++)
+                for (int k = 0; k < 3; k++)
                 {
-                    points[counter] = new Vector2(Random.Range(i, i + 1000), Random.Range(j, j + 750));
+                    points[counter] = new Vector2(Random.Range(i, i + 333), Random.Range(j, j + 400));
                     counter++;
                 }
             }
         }
-        MonoBehaviour.print("Hello sir");
+        //MonoBehaviour.print("Hello sir");
 
         points[0] = start;
         points[19] = end;
@@ -182,31 +188,31 @@ public class TileMap : MonoBehaviour {
         }
         for (int i = 0; i < 20; i++)
         {
-            float multiplier = Random.Range(2, 5);
+            float multiplier = Random.Range(2, 4);
             int pathsCreated = 0;
             Vector2 origin = points[i];
             while ((float)pathsCreated < multiplier)
             {
-                MonoBehaviour.print("oh hey");
+                //MonoBehaviour.print("oh hey");
 
                 for (int j = 0; j < 20; j++)
                 {
                     if (i != j)
                     {
-                        MonoBehaviour.print(i + " " + j);
+                        //MonoBehaviour.print(i + " " + j);
                         Vector2 dest = points[j];
-                        float dist = Distance(origin.x, origin.y, dest.x, dest.y);
-                        if (Random.Range(0, dist / 100) < multiplier)
+                        float dist = SquareDistance(origin.x, origin.y, dest.x, dest.y);
+                        if (Random.Range(0, dist * dist / 100000) < multiplier && !adjacency[i, j])
                         {
+                            MonoBehaviour.print(origin.x + " " + origin.y + " " + dest.x + " " + dest.y);
                             adjacency[i, j] = true;
                             adjacency[j, i] = true;
                             pathsCreated++;
-                            FillPath((int)origin.x, (int)origin.y, (int)dest.x, (int)dest.y, 3);
+                            FillPath((int)origin.x, (int)origin.y, (int)dest.x, (int)dest.y, 8);
                         }
                     }
                 }
-
-                pathsCreated++;
+                
             }
             
         }
@@ -221,9 +227,9 @@ public class TileMap : MonoBehaviour {
         MonoBehaviour.print(minX + " " + maxX + " " + minY + " " + maxY);
     }
 
-    float Distance(float x1, float y1, float x2, float y2)
+    float SquareDistance(float x1, float y1, float x2, float y2)
     {
-        return Mathf.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
     }
 	
 	void BuildChunks()
@@ -278,12 +284,20 @@ public class TileMap : MonoBehaviour {
     void FillPath(int x1, int y1, int x2, int y2, int size)
     {
         MonoBehaviour.print("what is up");
-        int steps = Mathf.Max(x2 - x1, y2 - y1);
+        int steps = Mathf.Max(Mathf.Abs(x2 - x1), Mathf.Abs(y2 - y1));
+
+        Vector2 offsetOffset = new Vector2(Random.Range(0, 100000), Random.Range(0, 100000));
+        Vector2 sizeOffset = new Vector2(Random.Range(0, 100000), Random.Range(0, 100000));
+
+        Vector2 diff = new Vector2(x2 - x1, y2 - y1);
+        Vector2 offset = new Vector2((y2 - y1) * .5f, (x2 - x1) * .5f);
+
         for (float frac = 0f; frac < 1f; frac += 1f / (float)steps)
         {
-            int x = (int) (x1 + (x2 - x1) * frac);
-            int y = (int)(y1 + (y2 - y1) * frac);
-            FillCircle(x, y, size);
+            float offsetPerlin = Mathf.PerlinNoise(offsetOffset.x + frac * 2, offsetOffset.y) * Mathf.Min(frac, 1 - frac);
+            int x = (int) (x1 + (diff * frac + offset * offsetPerlin).x);
+            int y = (int) (y1 + (diff * frac + offset * offsetPerlin).y);
+            FillCircle(x, y, (int) (size - 5 + 10f * Mathf.PerlinNoise(sizeOffset.x + frac * 10, sizeOffset.y)));
         }
     }
 

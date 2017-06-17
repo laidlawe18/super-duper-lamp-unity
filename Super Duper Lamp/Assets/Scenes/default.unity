@@ -136,6 +136,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunk: {fileID: 1471858231615904, guid: 698f2379d3f3a1b4a86adb210ed9e1bf, type: 2}
+  loadSize: 10
+  deloadSize: 15
 --- !u!4 &134578355
 Transform:
   m_ObjectHideFlags: 0
@@ -181,8 +183,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66be3c887538c5844865ad5822399490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
-  jumpForce: 10000
+  speed: 20
+  jumpForce: 30000
   grounded: 1
 --- !u!50 &164768433
 Rigidbody2D:
@@ -386,7 +388,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 8
+  orthographic size: 15
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
