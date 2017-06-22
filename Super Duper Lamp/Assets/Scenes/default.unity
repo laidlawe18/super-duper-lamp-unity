@@ -138,6 +138,7 @@ MonoBehaviour:
   chunk: {fileID: 1471858231615904, guid: 698f2379d3f3a1b4a86adb210ed9e1bf, type: 2}
   loadSize: 10
   deloadSize: 15
+  multiplier: 2
 --- !u!4 &134578355
 Transform:
   m_ObjectHideFlags: 0
@@ -222,7 +223,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.046875, y: 4.625}
+    oldSize: {x: 8.1875, y: 18.5}
     newSize: {x: 2.046875, y: 4.625}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -301,7 +302,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.046875, y: 4.625}
+    oldSize: {x: 8.1875, y: 18.5}
     newSize: {x: 2.046875, y: 4.625}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -388,7 +389,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 15
+  orthographic size: 240
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
