@@ -16,7 +16,7 @@ public class TileMap : MonoBehaviour {
     private int maxY = 30;
     public  int loadSize = 10;
     public  int deloadSize = 15;
-    public int multiplier = 16;
+    public int multiplier = 1;
 
     public int[,] map;
 
@@ -217,7 +217,7 @@ public class TileMap : MonoBehaviour {
                             adjacency[i, j] = true;
                             adjacency[j, i] = true;
                             pathsCreated++;
-                            FillPath((int)origin.x, (int)origin.y, (int)dest.x, (int)dest.y, 5 * multiplier);
+                            FillPath((int)origin.x, (int)origin.y, (int)dest.x, (int)dest.y, 3 * multiplier);
                         }
                     }
                 }
